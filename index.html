@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Timer</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.min.css">
+  <style>
+    body{
+     color: #555;
+     background: #5FB983;
+     background: linear-gradient(90deg, rgba(95, 185, 131, 1) 0%, rgba(64, 165, 147, 1) 50%, rgba(69, 72, 153, 1) 100%);
+      font-family: "Open Sans", sans-serif;
+      font-optical-sizing: auto;
+      font-style: normal;
+      font-variation-settings:
+      "wdth" 100;
+    }
+    .container{
+      margin: 50px auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+
+      width: 400px;
+      height: 400px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 2px 1px 9px 3px rgba(0,0,0,0.27);
+      -webkit-box-shadow: 2px 1px 9px 3px rgba(0,0,0,0.27);
+      -moz-box-shadow: 2px 1px 9px 3px rgba(0,0,0,0.27);
+    }
+    .wrap{
+      display: flex;
+      align-items:  center;
+      flex-direction: column;
+      gap: 25px;
+      
+      span {
+        color: #888;
+      }
+    }
+    .content-btn{
+      display: flex;
+      gap: 20px;
+
+      .start-end {
+        width: 100px;
+        height: 35px;
+        border-radius: 20px;
+        color: white;
+        background-color: #6a58a2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: none;
+        outline: none;
+        cursor: pointer;
+
+        i span{
+        color: white;
+        margin-left:2px ;
+        font-family: "Open Sans", sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+        font-variation-settings:
+        "wdth" 100;
+        font-weight:600;
+        }
+      }
+      .repeat i{
+        padding: 9px 10px;
+        border: 1px solid #6a58a2;
+        border-radius: 100%;
+        cursor: pointer;
+      }
+      
+    }
+   .timer-container {
+      width: 250px;
+      height: 250px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .timer-text {
+      position: absolute;
+      top: 50%;
+      left: 11%;
+      transform: translate(-0%, -50%);
+      font-size: 48px;
+      font-weight: bold;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg); /* Mulai dari atas */
+    }
+
+    circle {
+      fill: none;
+      stroke-width: 8;
+    }
+
+    .background {
+      stroke: #ddd;
+    }
+    .progress {
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.1s linear;
+    }
+    .modal{
+      position: absolute;
+      z-index: 10;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -60%);
+      padding: 10px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+
+      width: 300px;
+      height: 300px;
+      background-color: #ecececfa;
+      border-radius: 10px;
+      box-shadow: 2px 1px 9px 3px rgba(0,0,0,0.27);
+      -webkit-box-shadow: 2px 1px 9px 3px rgba(0,0,0,0.27);
+      -moz-box-shadow: 2px 1px 9px 3px rgba(0,0,0,0.27);
+
+      h3{
+        margin: 0;
+      }
+    }
+    .edit-time{
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size:xx-large;
+      font-weight: 600;
+
+      .btn-up, .btn-down{
+        display: flex;
+        gap: 65px;
+      }
+      i{
+        cursor: pointer;
+      }
+      .number-time{
+        display: flex;
+        gap: 10px;
+        background-color: white;
+        padding: 0 15px;
+        border-radius: 5px;
+        border: 1px solid rgb(169, 169, 169);
+        border-bottom: 3px solid #5FB983;
+
+        h2{
+          margin: 0;
+        }
+      }
+    }
+    .line{
+      height: 1px;
+      width: 100%;
+      background-color: rgb(169, 169, 169);
+    }
+    #save{
+      cursor: pointer;
+      padding: 8px 25px;
+      border-radius: 4px;
+      background-color: #6a58a2;
+      color: white;
+      border: none;
+      span{
+        margin-left: 5px;
+      }
+    }
+    #cancel{
+      cursor: pointer;
+      padding: 6px 23px;
+      border-radius: 4px;
+      background-color: white;
+      border:1px solid rgb(169, 169, 169);
+      color: rgb(169, 169, 169);
+      span{
+        margin-left: 4px;
+      }
+      
+    }
+    .font{
+      font-family: "Open Sans", sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+        font-variation-settings:
+        "wdth" 100;
+    }
+    .name-timer{
+      display: flex;
+      gap: 10px;
+      i{
+        font-size:x-large;
+      }
+      input{
+        margin: 0;
+        padding: 4px 8px;
+        outline: none;
+        border: 1px solid rgb(169, 169, 169);
+        border-bottom: 1.5px solid #5FB983;
+        border-radius: 4px;
+      }
+      input::placeholder{
+        opacity: 0.5;
+      }
+    }
+    .backdrop{
+      display: none;
+      position: fixed;
+      inset: 0;
+      backdrop-filter: blur(2px); /* ini yang bikin blur */
+    }
+  </style>
+</head>
+<body>
+     <div class="modal" id="modal">
+      <h3>Edit timer</h3>
+      <div class="edit-time">
+        <div class="btn-up">
+          <i class="plus-hour fa fa-angle-up " aria-hidden="true"></i>
+          <i class="plus-minute fa fa-angle-up " aria-hidden="true"></i>
+          <i class="plus-second fa fa-angle-up" aria-hidden="true"></i>
+        </div>
+        <div class="number-time">
+          <h2 id="hour">00</h2>
+          <h2>:</h2>
+          <h2 id="minute">00</h2>
+          <h2>:</h2>
+          <h2 id="second">00</h2>
+        </div>
+        <div class="btn-down">
+          <i class="minus-hour fa fa-angle-down" aria-hidden="true"></i>
+          <i class="minus-minute fa fa-angle-down" aria-hidden="true"></i>
+          <i class="minus-second fa fa-angle-down" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <div class="name-timer">
+        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+        <input type="text" placeholder="Timer name">
+      </div>
+      <span class="line"></span>
+      <div class="btn-end">
+        <button id="save" class="save">
+          <i class="fa fa-floppy-o save" aria-hidden="true"> <span class="font save"> Save </span> </i>
+        </button>
+        <button id="cancel" class="cancel">
+          <i class="font cancel" >X Cancel</span></i>
+        </button>
+      </div>
+
+    </div>
+    <div class="backdrop"></div>
+    <div class="container">
+     <div class="timer-container">
+       <svg>
+        <defs>
+          <radialGradient id="gradasiRadial" cx="50%" cy="100%" r="100%" fx="50%" fy="50%">
+            <stop offset="0%" style="stop-color:rgba(69, 72, 153, 1);stop-opacity:1" />
+            <stop offset="50%" style="stop-color:rgba(64, 165, 147, 1);stop-opacity:1" />
+            <stop offset="100%" style="stop-color:rgba(95, 185, 131, 1);stop-opacity:1" />
+          </radialGradient>
+        </defs>
+          <circle class="background" r="110" cx="125" cy="125" />
+          <circle class="progress" r="110" cx="125" cy="125" id="progress-ring" stroke="url(#gradasiRadial)" />
+      </svg>
+      <div class="timer-text" id="time-display">00:00:00</div>
+    </div>
+      <div class="wrap">
+        <span><i class="fa fa-music" aria-hidden="true"></i> By the cool Dev</span>
+        <div class="content-btn">
+          <button class="start-end">
+            <i class="fa fa-play" aria-hidden="true"> <span> Start </span></i> 
+          </button>
+          <div class="repeat">
+            <i class="fa fa-repeat repeat" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<div class="alert">
+  <div class="top-alert">
+    
+  </div>
+  <div class="content-alert">
+    <h4>Timer done</h4>
+    <p>maulana</p>
+    <p>19.44</p>
+  </div>
+  <button>Dismiss</button>
+</div>
+
+    
+</body>
+<script src="script.js"></script>
+</html>
