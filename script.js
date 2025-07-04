@@ -2,9 +2,12 @@ const progres = document.getElementById('progress-ring');
 const timeDisplay = document.getElementById('time-display');
 const timerContainer = document.querySelector('.timer-container');
 const modal = document.getElementById('modal');
-let values,reqTime,repeat,timeLeft;
+let values,reqTime,repeat,timeLeft,nameTimer;
 let zero = (x) => (x<10) ? `0${x}`: x;
 var timer;
+let inputNameTimer = document.getElementById('nameTimer');
+const audio = document.getElementById('myAudio');
+
 
 // logika stroke timer
 const radius = 110;
@@ -17,17 +20,19 @@ progres.style.strokeDashoffset = 0;
 
 const buttonTimer = document.querySelector('.start-end');
 const iconButtonTimer = buttonTimer.children[0];
+const iconRepeat =document.querySelector('.repeat');
 buttonTimer.addEventListener('click', () => {
-    if(progres.classList.contains('on')){
-        stop();
-        iconButtonTimer.classList.replace('fa-stop', 'fa-play');
-        iconButtonTimer.children[0].textContent = 'Start';
-        progres.classList.remove('on')
-    }else{
-        timer = setInterval(updateTimer,100);
-        iconButtonTimer.classList.replace('fa-play', 'fa-stop');
-        iconButtonTimer.children[0].textContent = 'Stop';
-        progres.classList.add('on')
+    if(values!=undefined){
+        if(values.reduce((a,b)=> a+b) !=0){
+            if(progres.classList.contains('on')){
+                stop();
+            }else{
+                timer = setInterval(updateTimer,100);
+                iconButtonTimer.classList.replace('fa-play', 'fa-stop');
+                iconButtonTimer.children[0].textContent = 'Stop';
+                progres.classList.add('on')
+            }
+        }
     }
     
 })
@@ -42,6 +47,7 @@ timerContainer.addEventListener('click', ()=> {
             modal.style.display='none';
             document.querySelector('.backdrop').style.display = 'none';
         }else if(e.target.classList.contains('save')){
+            nameTimer = inputNameTimer.value;
             modal.style.display='none';
             document.querySelector('.backdrop').style.display = 'none';
             let save = document.querySelectorAll('.number-time h2');
@@ -51,6 +57,7 @@ timerContainer.addEventListener('click', ()=> {
             reqTime =(values[0]*3600 + values[1]*60 + values[2])*1000;
             timeLeft = reqTime;
             repeat = Array.from(save).filter(e=> e.textContent!=':').map(e => Number(e.textContent));
+            (values.reduce((a,b)=> a+b) !=0)?unDisabled():'';
         }
     })
 
@@ -72,6 +79,15 @@ document.addEventListener('click', (el)=> {
         fcRepeat();
     }
 })
+// alert
+document.addEventListener('click', (e) =>{
+    if(e.target.classList.contains('alert-cancel')){
+        document.querySelector('.alert').style.display = 'none';
+        audio.pause();
+        progres.style.strokeDashoffset = 0; 
+    }
+})
+
 const stroke = () => {
   timeLeft -=100;
   const offset = keliling * (1-timeLeft/reqTime);
@@ -100,11 +116,28 @@ function updateTimer(){
     }
 
     (timeLeft>0)?stroke():null;    
-    (values.reduce((a,b)=>a+b)<=0)?stop():null;
+    if(values.reduce((a,b)=>a+b)<=0){
+        stop();
+        alert();
+        disabled();
+
+    }
+    
+}
+function alert(){
+    document.querySelector('.alert').style.display ='block';
+    let temp = document.querySelector('.ui-name-timer');
+    temp.textContent = nameTimer;
+    temp.nextElementSibling.textContent = `${zero(new Date().getHours())}:${zero(new Date().getMinutes())}`;
+    audio.currentTime = 0;
+    audio.play();
     
 }
 function stop(){
     clearInterval(timer)  
+    iconButtonTimer.classList.replace('fa-stop', 'fa-play');
+    iconButtonTimer.children[0].textContent = 'Start';
+    progres.classList.remove('on')
 }
 function editTimer(type,x){
     let element = document.getElementById(type);
@@ -137,4 +170,16 @@ function fcRepeat(){
     milisecond =1000;
     timeDisplay.textContent = repeat.map(e => zero(e)).join(':');
     timer = setInterval(updateTimer,100);
+}
+function unDisabled (){
+    buttonTimer.classList.remove('disabled');
+    iconRepeat.classList.remove('disabled');
+    buttonTimer.style.cursor ='pointer';
+    iconRepeat.style.cursor ='pointer';
+}
+function disabled (){
+    buttonTimer.classList.add('disabled');
+    iconRepeat.classList.add('disabled');
+    buttonTimer.style.cursor ='not-allowed';
+    iconRepeat.style.cursor ='not-allowed';
 }
